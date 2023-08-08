@@ -6,6 +6,7 @@
 		private $db_table = "conductores.Conductores";
 		private $db_table_historial_conductores = "conductores.HistorialConductores";
 		private $db_table_motivos = "conductores.Motivos";
+		private $db_table_estados = "conductores.Estados";
 		
 		public $id;
 		public $nombre;
@@ -20,6 +21,8 @@
 		public $id_motivo;
 		public $observacion;
 		public $descripcion;
+		public $documento;
+		public $fec_nac;
 
 		public function __construct($db){
 			$this->conn = $db;
@@ -30,6 +33,20 @@
 			$sqlQuery = "SELECT id, nombre, apellido, ci, id_estado, fecha_creacion, creado_por, fecha_modificacion, modificado_por FROM " .$this->db_table. "";
 			$stmt = $this->conn->prepare($sqlQuery);
 			
+			$stmt->execute();
+			
+			return $stmt;
+		}
+
+		public function getDatosConductor(){
+
+			$sqlQuery = "SELECT id, nombre, apellido, ci, id_estado, fec_nac, documento FROM " .$this->db_table. " WHERE id = :id";
+			
+			$stmt = $this->conn->prepare($sqlQuery);
+			
+			$this->id=htmlspecialchars(strip_tags($this->id));
+			$stmt->bindParam(":id", $this->id);
+
 			$stmt->execute();
 			
 			return $stmt;
@@ -69,16 +86,21 @@
 			$stmt->bindParam(":observacion", $this->observacion);
 			$stmt->bindParam(":fecha_creacion", $this->fecha_creacion);
 
-			if($stmt->execute()){
-				return true;
-			}else{
-				return false;
-			}
+			$stmt->execute();
+			
+			return $stmt;
 
 		}
 
 		public function getMotivos(){
 			$sqlQuery = "SELECT id, descripcion FROM ".$this->db_table_motivos." ORDER BY descripcion ASC";
+			$stmt = $this->conn->prepare($sqlQuery);
+			$stmt->execute();
+			return $stmt;
+		}
+
+		public function getEstados(){
+			$sqlQuery = "SELECT id, descripcion FROM ".$this->db_table_estados." ORDER BY descripcion ASC";
 			$stmt = $this->conn->prepare($sqlQuery);
 			$stmt->execute();
 			return $stmt;
@@ -98,40 +120,87 @@
 			$stmt->bindParam(":fecha_modificacion", $this->fecha_modificacion);
 			$stmt->bindParam(":modificado_por", $this->modificado_por);
 			
-			if($stmt->execute()){
-				return true;
-			}
-			return false;
-    	}
-    
-		/*
-    
-		public function updateEmpleado(){
+			$stmt->execute();
+			
+			return $stmt;
+			
+    }
+  
+  	public function agregarConductor(){
+			
+			$sqlQuery = "INSERT INTO ".$this->db_table." SET nombre = :nombre, apellido = :apellido, ci = :ci, fec_nac = :fec_nac, id_estado = :id_estado, creado_por = :creado_por, fecha_creacion = :fecha_creacion, documento = :documento, modificado_por = :modificado_por, fecha_modificacion = :fecha_modificacion";
+		
+			$stmt = $this->conn->prepare($sqlQuery);
 
-			UPDATE conductores.Conductores
-SET nombre='', apellido='', ci='', id_estado=0, fecha_creacion='', creado_por='', fecha_modificacion='', modificado_por=''
-WHERE id=0;
+			$this->nombre=htmlspecialchars(strip_tags($this->nombre));
+			$this->apellido=htmlspecialchars(strip_tags($this->apellido));
+			$this->ci=htmlspecialchars(strip_tags($this->ci));
+			$this->fec_nac=htmlspecialchars(strip_tags($this->fec_nac));
+			$this->id_estado=htmlspecialchars(strip_tags($this->id_estado));
+			$this->creado_por=htmlspecialchars(strip_tags($this->creado_por));
+			$this->fecha_creacion=htmlspecialchars(strip_tags($this->fecha_creacion));
+			$this->documento=htmlspecialchars(strip_tags($this->documento));
+			$this->modificado_por=htmlspecialchars(strip_tags($this->modificado_por));
+			$this->fecha_modificacion=htmlspecialchars(strip_tags($this->fecha_modificacion));
+		
+			$stmt->bindParam(":nombre", $this->nombre);
+			$stmt->bindParam(":apellido", $this->apellido);
+			$stmt->bindParam(":ci", $this->ci);
+			$stmt->bindParam(":fec_nac", $this->fec_nac);
+			$stmt->bindParam(":id_estado", $this->id_estado);
+			$stmt->bindParam(":creado_por", $this->creado_por);
+			$stmt->bindParam(":fecha_creacion", $this->fecha_creacion);
+			$stmt->bindParam(":documento", $this->documento);
+			$stmt->bindParam(":modificado_por", $this->modificado_por);
+			$stmt->bindParam(":fecha_modificacion", $this->fecha_modificacion);
 
+			$stmt->execute();
+			
+			return $stmt;
+		}
 
-			$sqlQuery = "UPDATE ".$this->db_table." SET nombre = :nombre, email = :email, designacion = :designacion, fecha_creacion = :fecha_creacion WHERE id = :id";
+		public function actualizarConductor(){
+
+			$sqlQuery = "UPDATE ".$this->db_table." SET nombre = :nombre, apellido = :apellido, ci = :ci, fec_nac = :fec_nac, id_estado = :id_estado, documento = :documento, modificado_por = :modificado_por, fecha_modificacion = :fecha_modificacion WHERE id = :id";
 			$stmt = $this->conn->prepare($sqlQuery);
 	
 			$this->id=htmlspecialchars(strip_tags($this->id));
 			$this->nombre=htmlspecialchars(strip_tags($this->nombre));
-			$this->email=htmlspecialchars(strip_tags($this->email));
-			$this->designacion=htmlspecialchars(strip_tags($this->designacion));
-			$this->fecha_creacion=htmlspecialchars(strip_tags($this->fecha_creacion));
+			$this->apellido=htmlspecialchars(strip_tags($this->apellido));
+			$this->ci=htmlspecialchars(strip_tags($this->ci));
+			$this->fec_nac=htmlspecialchars(strip_tags($this->fec_nac));
+			$this->id_estado=htmlspecialchars(strip_tags($this->id_estado));
+			$this->documento=htmlspecialchars(strip_tags($this->documento));
+			$this->modificado_por=htmlspecialchars(strip_tags($this->modificado_por));
+			$this->fecha_modificacion=htmlspecialchars(strip_tags($this->fecha_modificacion));
 			
 			$stmt->bindParam(":id", $this->id);
 			$stmt->bindParam(":nombre", $this->nombre);
-			$stmt->bindParam(":email", $this->email);
-			$stmt->bindParam(":designacion", $this->designacion);
-			$stmt->bindParam(":fecha_creacion", $this->fecha_creacion);
+			$stmt->bindParam(":apellido", $this->apellido);
+			$stmt->bindParam(":ci", $this->ci);
+			$stmt->bindParam(":fec_nac", $this->fec_nac);
+			$stmt->bindParam(":id_estado", $this->id_estado);
+			$stmt->bindParam(":documento", $this->documento);
+			$stmt->bindParam(":modificado_por", $this->modificado_por);
+			$stmt->bindParam(":fecha_modificacion", $this->fecha_modificacion);
 			
-			if($stmt->execute()){
-				return true;
-			}
-			return false;
-    	}*/
+			$stmt->execute();
+			
+			return $stmt;
+		}
+
+		public function checkRegistroConductor(){
+
+			$sqlQuery = "SELECT ci FROM " .$this->db_table. " WHERE ci = :ci";
+			
+			$stmt = $this->conn->prepare($sqlQuery);
+			
+			$this->ci=htmlspecialchars(strip_tags($this->ci));
+			$stmt->bindParam(":ci", $this->ci);
+
+			$stmt->execute();
+			
+			return $stmt;
+		}
   }
 ?>

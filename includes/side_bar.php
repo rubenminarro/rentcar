@@ -18,27 +18,33 @@
         </a>
         </li>
         <li id="1">
-        <a href="#">
+        <a id="conductores" href="#">
             <i class="nc-icon nc-badge"></i>
             <p>Conductores</p>
         </a>
         </li>
         <li id="2">
-        <a href="#">
+        <a id="registro-conductor" href="#">
             <i class="nc-icon nc-simple-add"></i>
-            <p>Registo Conductor</p>
+            <p>Registro Conductores</p>
         </a>
         </li>
         <li id="3">
-        <a href="#">
-            <i class="nc-icon nc-settings"></i>
-            <p>Talleres y Repuestos</p>
+        <a id="usuarios-permisos" href="#">
+            <i class="nc-icon nc-single-02"></i>
+            <p>Usuarios y Permisos</p>
         </a>
         </li>
         <li id="4">
+        <a id="registro-usuario" href="#">
+            <i class="nc-icon nc-simple-add"></i>
+            <p>Registro Usuarios</p>
+        </a>
+        </li>
+        <!--<li id="4">
         <a href="#">
-            <i class="nc-icon nc-single-02"></i>
-            <p>Usuarios y Permisos</p>
+            <i class="nc-icon nc-settings"></i>
+            <p>Talleres y Repuestos</p>
         </a>
         </li>
         <li id="5">
@@ -46,7 +52,7 @@
             <i class="nc-icon nc-settings-gear-65"></i>
             <p>Configuración</p>
         </a>
-        </li>
+        </li>-->
     </ul>
     </div>
 </div>

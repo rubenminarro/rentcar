@@ -12,9 +12,12 @@ $('.nav li').click(function() {
             break;
         case '2':
             $('#content').html('')
-            $('#content').load('partials/registrar-conductor.php');
+            $('#content').load('partials/registrar-conductor-form.php');
             break;
-    
+        case '3':
+            $('#content').html('')
+            $('#content').load('partials/usuarios.php');
+            break;  
         default:
             break;
     }
@@ -35,7 +38,7 @@ function cargarListaConductores(){
             //$.blockUI();
         },
         success: function (data) {
-            if(data){
+            if(data.ConductoresCount > 0){
                 
                 html = '';
                 
@@ -65,6 +68,9 @@ function cargarListaConductores(){
                             case '3':
                                 html += '<td class="text-center"><div class="alert alert-danger" style="background-color: #000000;"><span>Lista Negra</span></div></td>';
                                 break;
+                            case '4':
+                                html += '<td class="text-center"><div class="alert alert-danger" style="background-color:#CCC;color:#000;"><span>Borrado</span></div></td>';
+                                break;
                             default:
                                 break;
                         }
@@ -76,8 +82,6 @@ function cargarListaConductores(){
                 }
                 
                 $("#table-lista-conductores > tbody").append(html);
-            } else {
-                $("#table-lista-conductores > tbody").html('<tr class="align-middle"><td colspan="5" height="60">Sin conductores</td></tr>');
             }
 
             var table = $('#table-lista-conductores').DataTable({
@@ -110,47 +114,45 @@ function verHistorialConductor(id) {
             //$.blockUI();
         },
         success: function (data) {
-            if(data){
-                
-                html = '';
-                html += '<div class="table-responsive">';
-                    html += '<table id="table-lista-historial" class="table">';
-                        html += '<thead class=" text-primary">';
-                            html += '<tr>';
-                                html += '<th>Motivo</th>';
-                                html += '<th>Observación</th>';
-                                html += '<th>Fecha creación</th>';
-                                html += '<th>Última modificación</th>';
-                            html += '</tr>';
-                        html += '</thead>';
-                        html += '<tbody>';
-                            if(data.ConductorHistorialCount > 0){
-                                for (var i = 0; i < data.ConductorHistorialCount; i++) {
-                                    html += '<tr>';
-                                        html += '<td>'+data.ConductorHistorial[i].motivo+'</td>';
-                                        html += '<td>'+data.ConductorHistorial[i].observacion+'</td>';
-                                        html += '<td>'+data.ConductorHistorial[i].fecha_creacion+'</td>';
-                                        html += '<td>'+data.ConductorHistorial[i].fecha_modificacion+'</td>';
-                                    html += '</tr>';
-                                }
-                            }else{
-                                html += '<tr class="align-middle"><td class="text-center" colspan="4" height="60">No existe historial del conductor</td></tr>';
-                            }
-                        html += '<tbody>';
-                    html += '</table>';
-                html += '</div>';
-                
-                if(data.ConductorHistorialCount > 0){
-                    $("#historialConductorModalLabel").append('Historial del conductor: '+data.ConductorHistorial[0].nombre_completo);
-                }else{
-                    $("#historialConductorModalLabel").append('Historial del conductor vacio.');
-                }           
-
-                $("#historialConductorModal > .modal-dialog > .modal-content > .modal-body").append(html);
             
+                
+            html = '';
+            html += '<div class="table-responsive">';
+                html += '<table id="table-lista-historial" class="table">';
+                    html += '<thead class=" text-primary">';
+                        html += '<tr>';
+                            html += '<th>Motivo</th>';
+                            html += '<th>Observación</th>';
+                            html += '<th>Creado por</th>';
+                            html += '<th>Fecha creación</th>';
+                        html += '</tr>';
+                    html += '</thead>';
+                    html += '<tbody>';
+                        if(data.ConductorHistorialCount > 0){
+                            for (var i = 0; i < data.ConductorHistorialCount; i++) {
+                                html += '<tr>';
+                                    html += '<td>'+data.ConductorHistorial[i].motivo+'</td>';
+                                    html += '<td>'+data.ConductorHistorial[i].observacion+'</td>';
+                                    html += '<td>'+data.ConductorHistorial[i].creado_por+'</td>';
+                                    html += '<td>'+data.ConductorHistorial[i].fecha_creacion+'</td>';
+                                html += '</tr>';
+                            }
+                        }else{
+                            html += '<tr class="align-middle"><td class="text-center" colspan="4" height="60">No existe historial del conductor</td></tr>';
+                        }
+                    html += '<tbody>';
+                html += '</table>';
+            html += '</div>';
+            
+            if(data.ConductorHistorialCount > 0){
+                $("#historialConductorModalLabel").append('Historial del conductor: '+data.ConductorHistorial[0].nombre_completo);
             }else{
-                $("#table-lista-historial > tbody").html('<tr class="align-middle"><td class="text-center" colspan="4" height="60">No existe historial del conductor</td></tr>');
-            }
+                $("#historialConductorModalLabel").append('Historial del conductor vacio.');
+            }           
+
+            $("#historialConductorModal > .modal-dialog > .modal-content > .modal-body").append(html);
+            
+            
             $('#historialConductorModal').modal();
         }
     });
@@ -204,15 +206,28 @@ function guardarHistorialConductor(){
         },
         beforeSend: function (e) {
             $("#agregarHistorialConductorModal > .modal-dialog > .modal-content > form > .modal-body").html('');
-            //$.blockUI();
         },
         success: function (data) {
-
-            mensaje = '<div class="alert alert-success"><span>'+data.mensaje+'</span></div>';
-            $("#agregarHistorialConductorModal > .modal-dialog > .modal-content > form > .modal-body").html(mensaje);
-            
-            $("#btn-guardar-historial-conductor").hide();
-
+            $('#agregarHistorialConductorModal').modal('hide');
+            if(data.status == 1){
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'success',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#conductores").trigger("click");
+                });
+            }else{
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'error',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#conductores").trigger("click");
+                });
+            }
         }
     });
 }
@@ -226,16 +241,12 @@ async function cargarMotivos(){
         complete: function (e) {
             //$.unblockUI();
         },
-        beforeSend: function (e) {
-            //$.blockUI();
-        },
         success: function (data) {
             return data;
         }
     });
 
     return res;
-
 }
 
 function cambiarEstadoConductor(id_conductor,id_estado){
@@ -253,17 +264,290 @@ function cambiarEstadoConductor(id_conductor,id_estado){
         complete: function (e) {
             //$.unblockUI();
         },
+        success: function (data) {
+            if(data.status == 1){
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'success',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#conductores").trigger("click");
+                });
+            }else{
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'error',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#conductores").trigger("click");
+                });
+            }
+        }
+    });
+}
+
+async function cargarEstadosConductores(){
+
+    var select = '';
+
+    const res = await $.ajax({
+        url: "api/conductores/cargar-estados-conductores.php",
+        method: "POST",
+        dataType: "json",
+        complete: function (e) {
+            //$.unblockUI();
+        },
         beforeSend: function (e) {
-            //$("#agregarHistorialConductorModal > .modal-dialog > .modal-content > form > .modal-body").html('');
+            $("#id_estado").html('');
             //$.blockUI();
         },
         success: function (data) {
-            if(data.status == 'ok'){
-                mensaje = '<div class="alert alert-success alert-dismissible fade show"><button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close"><iclass="nc-icon nc-simple-remove"></i></button><span>'+data.mensaje+'"</span></div>';
+
+            if(data.ConductorEstadosCount > 0){
+                for (var i = 0; i <data.ConductorEstadosCount; i++) {
+                    select += '<option value="'+data.ConductorEstados[i].id+'">'+data.ConductorEstados[i].descripcion;
+                }
             }else{
-                mensaje = '<div class="alert alert-danger alert-dismissible fade show"><button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close"><i class="nc-icon nc-simple-remove"></i></button><span>'+data.mensaje+'"</span></div>';
+                select += '<option>No existen motivos cargados</option>';
             }
-            $("#alerts").html(mensaje);
+
+            $("#id_estado").html(select);
+
         }
     });
+
+    return res;
+}
+
+function registrarConductor(formData){
+    
+    $.ajax({
+        url: "api/conductores/registrar-conductor.php",
+        method: "POST",
+        dataType: "json",
+        data: formData,
+        contentType: false,
+        cache: false,
+        processData: false,
+        complete: function (e) {
+            //$.unblockUI();
+        },
+        success: function (data) {
+            if(data.status == 1){
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'success',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#conductores").trigger("click");
+                });
+            }else{
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'error',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#registro-conductor").trigger("click");
+                });
+            }
+        }
+    });
+}
+
+function editarConductor(id){
+    $('#content').html('');
+    $('#content').load('partials/editar-conductor-form.php?id='+id);
+}
+
+async function cargarDatosConductor(id){
+
+    await cargarEstadosConductores();
+
+    var datos = {};
+    datos["id"] = id;
+
+    const res = await $.ajax({
+        url: "api/conductores/cargar-datos-conductor.php",
+        method: "POST",
+        dataType: "json",
+        data: datos,
+        beforeSend: function (e) {
+            $('#form-editar-conductor').trigger("reset");
+        },
+        success: function (data) {
+
+            if(data.ConductorCount > 0){
+                for (var i = 0; i <data.ConductorCount; i++) {
+                    $('#id').val(data.Conductor[i].id);
+                    $('#nombre').val(data.Conductor[i].nombre);
+                    $('#apellido').val(data.Conductor[i].apellido);
+                    $('#ci').val(data.Conductor[i].ci);
+                    $('#id_estado').val(data.Conductor[i].id_estado);
+                    $('#documento-anterior').val(data.Conductor[i].documento);
+                    $('#fec_nac').val(data.Conductor[i].fec_nac);
+                    $('#documento-img').html('');
+                    $('#documento-img').html('<img src="/lista/assets/img/documentos/'+data.Conductor[i].documento+'" alt="Documento anterior" style="width: 240px;"/>');
+                }
+            }else{
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'error',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#conductores").trigger("click");
+                });
+            }
+        }
+
+    });
+
+    return res;
+}
+
+function actualizarConductor(formData){
+    
+  $.ajax({
+      url: "api/conductores/actualizar-conductor.php",
+      method: "POST",
+      dataType: "json",
+      data: formData,
+      contentType: false,
+      cache: false,
+      processData: false,
+      complete: function (e) {
+          //$.unblockUI();
+      },
+      success: function (data) {
+          if(data.status == 1){
+              Swal.fire({
+                title: 'Atención!',
+                text: data.mensaje,
+                icon: 'success',
+                confirmButtonText: 'Continuar'
+              }).then((result) => {
+                 $('#content').load('partials/editar-conductor-form.php?id='+data.id);
+              });
+          }else{
+              Swal.fire({
+                title: 'Atención!',
+                text: data.mensaje,
+                icon: 'error',
+                confirmButtonText: 'Continuar'
+              }).then((result) => {
+                $("#registro-conductor").trigger("click");
+              });
+          }
+      }
+  });
+}
+
+function cambiarEstadoUsuario(id,id_estado){
+
+    var datos = {};
+    datos["id"] = id;
+    datos["id_estado"] = id_estado;
+    datos["modificado_por"] = 'rminarro';
+
+    $.ajax({
+        url: "api/usuarios/cambiar-estado-usuario.php",
+        method: "POST",
+        dataType: "json",
+        data: datos,
+        complete: function (e) {
+            //$.unblockUI();
+        },
+        success: function (data) {
+            if(data.status == 1){
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'success',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#usuarios-permisos").trigger("click");
+                });
+            }else{
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'error',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#usuarios-permisos").trigger("click");
+                });
+            }
+        }
+    });
+  }
+
+function cargarListaUsuarios(){
+  
+  $.ajax({
+    url: "api/usuarios/usuarios-lista.php",
+    method: "POST",
+    dataType: "json",
+    complete: function (e) {
+      //$.unblockUI();
+    },
+    beforeSend: function (e) {
+      $("#table-lista-usuarios > tbody").html('');
+      //$.blockUI();
+    },
+    success: function (data) {
+      
+      if(data.UsuariosCount > 0){
+        
+        html = '';
+        
+        for (var i = 0; i < data.UsuariosCount; i++) {
+
+          html += '<tr class="">';
+            html += '<td class="text-center">';
+              html += '<a href="#" onclick="editarUsuario('+data.Usuarios[i].id+');" title="Editar Usuario" style="margin-right:5px;"><i class="nc-icon nc-circle-10"></i></a>';
+              switch (data.Usuarios[i].id_estado) {
+                case '2':
+                    html += '<a href="#" onclick="cambiarEstadoUsuario('+data.Usuarios[i].id+',1);" title="Activar Usuario"><i class="nc-icon nc-simple-add"></i></a>';
+                    break;
+                default:
+                    html += '<a href="#" onclick="cambiarEstadoUsuario('+data.Usuarios[i].id+',2);" title="Inactivar Usuario"><i class="nc-icon nc-simple-remove"></i></a>';
+                    break;
+              }
+            html += '</td>';
+            html += '<td>' + data.Usuarios[i].nombre + ' ' + data.Usuarios[i].apellido + '</td>';
+            html += '<td>' + data.Usuarios[i].ci + '</td>';
+            html += '<td>' + data.Usuarios[i].usuario + '</td>';
+            switch (data.Usuarios[i].id_estado) {
+              case '1':
+                html += '<td class="text-center"><div class="alert alert-success"><span>Activo</span></div></td>';
+                break;
+              case '2':
+                html += '<td class="text-center"><div class="alert alert-warning"><span>Inactivo</span></div></td>';
+                break;
+              default:
+                break;
+            }
+            html += '<td>' + data.Usuarios[i].creado_por + '</td>';
+            html += '<td>' + data.Usuarios[i].fecha_creacion + '</td>';
+          html += '</tr>';
+
+        }
+        
+        $("#table-lista-usuarios > tbody").append(html);
+      }
+
+      var table = $('#table-lista-usuarios').DataTable({
+        language: {
+          url: 'assets/js/plugins/es-ES.json',
+        },
+      });
+    }
+  });
+
+  
+
 }

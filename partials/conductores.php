@@ -24,7 +24,7 @@
 </div>
 
 <div class="modal fade" id="historialConductorModal" tabindex="-1" role="dialog" aria-labelledby="historialConductorModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="historialConductorModalLabel"></h5>
@@ -42,7 +42,7 @@
 </div>
 
 <div class="modal fade" id="agregarHistorialConductorModal" tabindex="-1" role="dialog" aria-labelledby="agregarHistorialConductorModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="agregarHistorialConductorModalLabel">Agregar historial al conductor</h5>
@@ -66,12 +66,14 @@
 
     $(document).ready(function () {
       
-		cargarListaConductores();
+  		cargarListaConductores();
 
-		$("#form-agregar-historial-conductor").submit(function(event){
-			guardarHistorialConductor();
-			return false;
-		});
+  		$("#form-agregar-historial-conductor").submit(function(e){
+  			
+        e.preventDefault();
+        guardarHistorialConductor();
+  			
+  		});
 
     });
 

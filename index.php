@@ -18,6 +18,7 @@
         <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
         <!-- CSS Files -->
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="assets/css/sweetalert2.min.css" rel="stylesheet" />
         <link href="assets/css/paper-dashboard.css?v=2.0.1" rel="stylesheet" />
         <link href="assets/css/datatables.min.css" rel="stylesheet" />
         
@@ -57,7 +58,8 @@
         <script src="assets/js/plugins/bootstrap-notify.js"></script>
         <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
         <script src="assets/js/plugins/datatables.min.js"></script>
-        <script src="assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script><!-- Paper Dashboard DEMO -->
+        <script src="assets/js/sweetalert2.all.min.js" type="text/javascript"></script>
+        <script src="assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
         <script src="assets/js/functions.js" type="text/javascript"></script>
     </body>
 </html>

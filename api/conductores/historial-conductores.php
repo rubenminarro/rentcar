@@ -35,9 +35,7 @@
 				"motivo" => $motivo,
 				"observacion" => $observacion,
 				"fecha_creacion" => date("d/m/Y", strtotime($fecha_creacion)),
-				"creado_por" => $creado_por,
-				"fecha_modificacion" => (($fecha_modificacion) ? date("d/m/Y", strtotime($fecha_modificacion)) : ''),
-				"modificado_por" => (($modificado_por) ? $modificado_por : '')
+				"creado_por" => $creado_por
 			);
 			array_push($conductor_historial_arr["ConductorHistorial"], $c);
 		}
@@ -45,36 +43,5 @@
 	
 	http_response_code(200);
 	echo json_encode($conductor_historial_arr);
-	
-	/*if (isset($_COOKIE['jwt'])) {
-
-		$handle = curl_init();
-		$data_token = json_encode(array(
-			'jwt' => $_COOKIE['jwt']
-		));
-		curl_setopt_array($handle,
-			array(
-				CURLOPT_URL => $url_val_token,
-				CURLOPT_POST => true,
-				CURLOPT_POSTFIELDS => $data_token,
-				CURLOPT_RETURNTRANSFER => true,
-			)
-		);
-		$data_token = curl_exec($handle);
-		curl_close($handle);
-		
-		$data_token = json_decode($data_token);
-
-		if(isset($data_token->data->id)){
-	
-		}else{
-			http_response_code(400);
-			echo json_encode(array("mensaje" => "Token inválido."));
-		}
-	}else{
-		http_response_code(400);
-		echo json_encode(array("mensaje" => "No está logueado."));
-	}*/
-	
 	
 ?>

@@ -8,21 +8,47 @@
 		public $id;
 		public $nombre;
 		public $apellido;
-		public $email;
+		public $usuario;
+		public $id_estado;
+		public $ci;
 		public $password;
+		public $fecha_creacion;
+		public $creado_por;
+		public $fecha_modificacion;
+		public $modificado_por;
 
 		public function __construct($db){
 			$this->conn = $db;
 		}
 		
 		public function getUsuarios(){
-			$sqlQuery = "SELECT id, nombre, apellido, email, fecha_creacion, fecha_modificacion FROM " .$this->db_table. "";
+			$sqlQuery = "SELECT id, nombre, apellido, ci, usuario, id_estado, creado_por, fecha_creacion, modificado_por, fecha_modificacion FROM " .$this->db_table. " ORDER BY id_estado ASC";
 			$stmt = $this->conn->prepare($sqlQuery);
 			$stmt->execute();
 			return $stmt;
 		}
+
+		public function cambiarEstado(){
+			$sqlQuery = "UPDATE ".$this->db_table." SET id_estado = :id_estado, fecha_modificacion = :fecha_modificacion, modificado_por = :modificado_por WHERE id = :id";
+			$stmt = $this->conn->prepare($sqlQuery);
+	
+			$this->id=htmlspecialchars(strip_tags($this->id));
+			$this->id_estado=htmlspecialchars(strip_tags($this->id_estado));
+			$this->fecha_modificacion=htmlspecialchars(strip_tags($this->fecha_modificacion));
+			$this->modificado_por=htmlspecialchars(strip_tags($this->modificado_por));
+			
+			$stmt->bindParam(":id", $this->id);
+			$stmt->bindParam(":id_estado", $this->id_estado);
+			$stmt->bindParam(":fecha_modificacion", $this->fecha_modificacion);
+			$stmt->bindParam(":modificado_por", $this->modificado_por);
+			
+			$stmt->execute();
+			
+			return $stmt;
+			
+    }
 		
-		public function createUsuario(){
+		/*public function createUsuario(){
 			
 			$sqlQuery = "INSERT INTO ".$this->db_table. " SET nombre = :nombre, apellido = :apellido, email = :email, password = :password, fecha_creacion = :fecha_creacion";
 
@@ -120,6 +146,6 @@
 				return true;
 			}
 			return false;
-		}
+		}*/
   }
 ?>
