@@ -4,7 +4,7 @@
 		private $host = "127.0.0.1";
 		private $database_name = "conductores";
 		private $username = "root";
-		private $password = "";
+		private $password = "Ruben_1984@@";
 		public $conn;
 		
 		public function obtenerConexion(){		

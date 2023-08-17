@@ -45,7 +45,7 @@
 			}
 		}else{
 			http_response_code(200);    
-			echo json_encode(array('status'=>0,'mensaje' => 'La extensiónnn del documentos es inválida, favor intentar de nuevo.'));
+			echo json_encode(array('status'=>0,'mensaje' => 'La extensión del documentos es inválida, favor intentar de nuevo.'));
 		}
 	}
 
@@ -57,8 +57,8 @@
 		$conductor->ci = $_POST['ci'];
 		$conductor->fec_nac = $_POST['fec_nac'];
 		$conductor->id_estado = $_POST['id_estado'];
-		$conductor->modificado_por = 'rminarro';
-		$conductor->fecha_modificacion = 'now()';
+		$conductor->modificado_por = 'rminarrooooo';
+		$conductor->fecha_modificacion = date("Y-m-d H:i:s");
 
 		if(empty($_FILES['documento-nuevo']['name'])){
 			$conductor->documento = $_POST['documento-anterior'];
