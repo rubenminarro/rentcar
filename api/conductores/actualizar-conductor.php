@@ -57,7 +57,7 @@
 		$conductor->ci = $_POST['ci'];
 		$conductor->fec_nac = $_POST['fec_nac'];
 		$conductor->id_estado = $_POST['id_estado'];
-		$conductor->modificado_por = 'rminarrooooo';
+		$conductor->modificado_por = 'rminarro';
 		$conductor->fecha_modificacion = date("Y-m-d H:i:s");
 
 		if(empty($_FILES['documento-nuevo']['name'])){

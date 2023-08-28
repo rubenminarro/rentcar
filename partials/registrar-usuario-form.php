@@ -2,11 +2,11 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="card-title"> Registro de Conductores</h4>
+                <h4 class="card-title"> Registro de Usuarios</h4>
             </div>
 			<div class="card-body">
 				<div id="alerts"></div>
-				<form id="form-registrar-conductor" name="form-registrar-conductor" enctype="multipart/form-data">
+				<form id="form-registrar-usuario" name="form-registrar-usuario" oninput='confirmar_password.setCustomValidity(confirmar_password.value != password.value ? "Las contraseñas no coinciden." : "")'>
                   <div class="row">
                     <div class="col-md-4 px-1">
                       <div class="form-group">
@@ -28,28 +28,34 @@
                     </div>
                   </div> 
                   <div class="row">
-                    <div class="col-md-4 px-1">
-                      <div class="form-group">
-                        <label for="fec_nac">Fecha Nacimiento</label>
-                        <input id="fec_nac" name="fec_nac" type="date" class="form-control" placeholder="Fecha Nacimiento" required>
-                      </div>
-                    </div>
-                    <div class="col-md-4 pl-1">
+				  	<div class="col-md-3 pl-1">
                       <div class="form-group">
                         <label for="id_estado">Estado</label>
                         <select class="form-control" id="id_estado" name="id_estado" required></select>
                       </div>
                     </div>
-                    <div class="col-md-4 px-1">
+				 	<div class="col-md-3 pl-1">
                       <div class="form-group">
-                        <label for="documento">Documento</label>
-                        <input id="documento" name="documento" type="file" style="opacity: 100;position: inherit;" class="form-control" placeholder="Documento" required>
+                        <label for="usuario">Usuario</label>
+                        <input id="usuario" name="usuario" type="text" class="form-control" placeholder="Usuario" required>
+                      </div>
+                    </div>
+                    <div class="col-md-3 px-1">
+                      <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <input id="password" name="password" type="password" class="form-control" placeholder="password" pattern="[a-z0-9.\-]{8,}" title="La contraseña de contener número y letras y más de ocho caracteres." required>
+                      </div>
+                    </div>
+					<div class="col-md-3 px-1">
+                      <div class="form-group">
+                        <label for="confirmar_password">Confirmar contraseña</label>
+                        <input id="confirmar_password" name="confirmar_password" type="confirmar_password" class="form-control" placeholder="Contraseña" pattern="[a-z0-9.\-]{8,}" title="La contraseña debe contener número y letras y más de ocho caracteres." required>
                       </div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="update ml-auto mr-auto">
-                      <button id="btn-registrar-conductor" type="submit" class="btn btn-primary btn-round">Registrar conductor</button>
+                      <button id="btn-registrar-usuario" type="submit" class="btn btn-primary btn-round">Registrar Usuario</button>
                     </div>
                   </div>
                 </form>
@@ -62,18 +68,18 @@
 
     $(document).ready(function () {
       
-		  cargarEstados();
+		cargarEstados();
 
-      $("#form-registrar-conductor").submit(function(e){
+      $("#form-registrar-usuario").submit(function(e){
 
         e.preventDefault();
 
         var formData = new FormData($(this)[0]);
 
-        registrarConductor(formData);
-        
-      });
+        registrarUsuario(formData);
 
 		});
+
+	});
 
 </script>

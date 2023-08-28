@@ -21,6 +21,8 @@
 
 	if(isset($_FILES['documento']['name']) && isset($_POST['nombre']) && isset($_POST['apellido']) && isset($_POST['ci']) && isset($_POST['fec_nac']) && isset($_POST['id_estado'])){
 
+		$conductor->ci = $_POST['ci'];
+
 		if(!$conductor->checkRegistroConductor()){        
 			
 			$extensiones_validas = array('jpeg','jpg','png');
@@ -41,7 +43,6 @@
 
 						$conductor->nombre = $_POST['nombre'];
 						$conductor->apellido = $_POST['apellido'];
-						$conductor->ci = $_POST['ci'];
 						$conductor->fec_nac = $_POST['fec_nac'];
 						$conductor->id_estado = $_POST['id_estado'];
 						$conductor->creado_por = 'rminarro';

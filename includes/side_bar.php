@@ -30,9 +30,9 @@
         </a>
         </li>
         <li id="3">
-        <a id="usuarios-permisos" href="#">
+        <a id="usuarios" href="#">
             <i class="nc-icon nc-single-02"></i>
-            <p>Usuarios y Permisos</p>
+            <p>Usuarios</p>
         </a>
         </li>
         <li id="4">

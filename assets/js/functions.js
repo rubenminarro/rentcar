@@ -17,6 +17,10 @@ $('.nav li').click(function() {
         case '3':
             $('#content').html('')
             $('#content').load('partials/usuarios.php');
+            break;
+        case '4':
+            $('#content').html('')
+            $('#content').load('partials/registrar-usuario-form.php');
             break;  
         default:
             break;
@@ -288,12 +292,12 @@ function cambiarEstadoConductor(id_conductor,id_estado){
     });
 }
 
-async function cargarEstadosConductores(){
+async function cargarEstados(){
 
     var select = '';
 
     const res = await $.ajax({
-        url: "api/conductores/cargar-estados-conductores.php",
+        url: "api/conductores/cargar-estados.php",
         method: "POST",
         dataType: "json",
         complete: function (e) {
@@ -305,9 +309,9 @@ async function cargarEstadosConductores(){
         },
         success: function (data) {
 
-            if(data.ConductorEstadosCount > 0){
-                for (var i = 0; i <data.ConductorEstadosCount; i++) {
-                    select += '<option value="'+data.ConductorEstados[i].id+'">'+data.ConductorEstados[i].descripcion;
+            if(data.EstadosCount > 0){
+                for (var i = 0; i <data.EstadosCount; i++) {
+                    select += '<option value="'+data.Estados[i].id+'">'+data.Estados[i].descripcion;
                 }
             }else{
                 select += '<option>No existen motivos cargados</option>';
@@ -365,7 +369,7 @@ function editarConductor(id){
 
 async function cargarDatosConductor(id){
 
-    await cargarEstadosConductores();
+    await cargarEstados();
 
     var datos = {};
     datos["id"] = id;
@@ -483,7 +487,7 @@ function cambiarEstadoUsuario(id,id_estado){
             }
         }
     });
-  }
+}
 
 function cargarListaUsuarios(){
   
@@ -550,4 +554,126 @@ function cargarListaUsuarios(){
 
   
 
+}
+
+function registrarUsuario(formData){
+    
+    $.ajax({
+        url: "api/usuarios/registrar-usuario.php",
+        method: "POST",
+        dataType: "json",
+        data: formData,
+        contentType: false,
+        cache: false,
+        processData: false,
+        complete: function (e) {
+            //$.unblockUI();
+        },
+        success: function (data) {
+            if(data.status == 1){
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'success',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#usuarios").trigger("click");
+                });
+            }else{
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'error',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#registro-usuario").trigger("click");
+                });
+            }
+        }
+    });
+}
+
+function editarUsuario(id){
+    $('#content').html('');
+    $('#content').load('partials/editar-usuario-form.php?id='+id);
+}
+
+function actualizarUsuario(formData){
+    
+    $.ajax({
+        url: "api/usuarios/actualizar-usuario.php",
+        method: "POST",
+        dataType: "json",
+        data: formData,
+        contentType: false,
+        cache: false,
+        processData: false,
+        complete: function (e) {
+            //$.unblockUI();
+        },
+        success: function (data) {
+            if(data.status == 1){
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'success',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                   $('#content').load('partials/editar-usuario-form.php?id='+data.id);
+                });
+            }else{
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'error',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#registro-usuario").trigger("click");
+                });
+            }
+        }
+    })
+}
+
+async function cargarDatosUsuario(id){
+
+    await cargarEstados();
+
+    var datos = {};
+    datos["id"] = id;
+
+    const res = await $.ajax({
+        url: "api/usuarios/cargar-datos-usuario.php",
+        method: "POST",
+        dataType: "json",
+        data: datos,
+        beforeSend: function (e) {
+            $('#form-editar-usuario').trigger("reset");
+        },
+        success: function (data) {
+
+            if(data.UsuarioCount > 0){
+                for (var i = 0; i <data.UsuarioCount; i++) {
+                    $('#id').val(data.Usuario[i].id);
+                    $('#nombre').val(data.Usuario[i].nombre);
+                    $('#apellido').val(data.Usuario[i].apellido);
+                    $('#ci').val(data.Usuario[i].ci);
+                    $('#usuario').val(data.Usuario[i].usuario);
+                    $('#id_estado').val(data.Usuario[i].id_estado);
+                }
+            }else{
+                Swal.fire({
+                  title: 'Atención!',
+                  text: data.mensaje,
+                  icon: 'error',
+                  confirmButtonText: 'Continuar'
+                }).then((result) => {
+                  $("#conductores").trigger("click");
+                });
+            }
+        }
+
+    });
+
+    return res;
 }

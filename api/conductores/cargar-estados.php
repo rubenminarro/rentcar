@@ -14,15 +14,15 @@
 	
 	$database = new Database();
 	$db = $database->obtenerConexion();
-	$conductor_estados= new Conductores($db);
-	$stmt = $conductor_estados->getEstados();
-	$conductor_estados_count = $stmt->rowCount();
+	$estados= new Conductores($db);
+	$stmt = $estados->getEstados();
+	$estados_count = $stmt->rowCount();
 	
-	$conductor_estados_arr = array();
-	$conductor_estados_arr["ConductorEstados"] = array();
-	$conductor_estados_arr["ConductorEstadosCount"] = $conductor_estados_count;
+	$estados_arr = array();
+	$estados_arr["Estados"] = array();
+	$estados_arr["EstadosCount"] = $estados_count;
 
-	if($conductor_estados_count > 0){
+	if($estados_count > 0){
 		
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
 			
@@ -31,11 +31,11 @@
 				"id" => $id,
 				"descripcion" => $descripcion,
 			);
-			array_push($conductor_estados_arr["ConductorEstados"], $c);
+			array_push($estados_arr["Estados"], $c);
 		}
 	}
 	
 	http_response_code(200);
-	echo json_encode($conductor_estados_arr);
+	echo json_encode($estados_arr);
 
 ?>

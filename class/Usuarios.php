@@ -3,7 +3,7 @@
 	class Usuarios{
         
 		private $conn;
-		private $db_table = "Usuarios";
+		private $db_table = "conductores.Usuarios";
 		
 		public $id;
 		public $nombre;
@@ -46,79 +46,68 @@
 			
 			return $stmt;
 			
-    }
+    	}
 		
-		/*public function createUsuario(){
+		public function agregarUsuario(){
 			
-			$sqlQuery = "INSERT INTO ".$this->db_table. " SET nombre = :nombre, apellido = :apellido, email = :email, password = :password, fecha_creacion = :fecha_creacion";
+			$sqlQuery = "INSERT INTO ".$this->db_table. " SET nombre = :nombre, apellido = :apellido, ci = :ci, usuario = :usuario, id_estado = :id_estado, password = :password, creado_por = :creado_por, fecha_creacion = :fecha_creacion, modificado_por = :modificado_por, fecha_modificacion = :fecha_modificacion";
 
 			$stmt = $this->conn->prepare($sqlQuery);
 
 			$this->nombre=htmlspecialchars(strip_tags($this->nombre));
 			$this->apellido=htmlspecialchars(strip_tags($this->apellido));
-			$this->email=htmlspecialchars(strip_tags($this->email));
+			$this->ci=htmlspecialchars(strip_tags($this->ci));
+			$this->usuario=htmlspecialchars(strip_tags($this->usuario));
+			$this->id_estado=htmlspecialchars(strip_tags($this->id_estado));
 			$this->password=htmlspecialchars(strip_tags($this->password));
+			$this->creado_por=htmlspecialchars(strip_tags($this->creado_por));
 			$this->fecha_creacion=htmlspecialchars(strip_tags($this->fecha_creacion));
+			$this->modificado_por=htmlspecialchars(strip_tags($this->modificado_por));
+			$this->fecha_modificacion=NULL;
 			
 			$stmt->bindParam(':nombre', $this->nombre);
 			$stmt->bindParam(':apellido', $this->apellido);
-			$stmt->bindParam(':email', $this->email);
-			$stmt->bindParam(":fecha_creacion", $this->fecha_creacion);
+			$stmt->bindParam(':ci', $this->ci);
+			$stmt->bindParam(':usuario', $this->usuario);
+			$stmt->bindParam(":id_estado", $this->id_estado);
+			$stmt->bindParam(':creado_por', $this->creado_por);
+			$stmt->bindParam(':fecha_creacion', $this->fecha_creacion);
+			$stmt->bindParam(':modificado_por', $this->modificado_por);
+			$stmt->bindParam(":fecha_modificacion", $this->fecha_modificacion);
 
-			$password_hash = password_hash($this->password, PASSWORD_BCRYPT);
-			$stmt->bindParam(':password', $password_hash);
+			$password = password_hash($this->password, PASSWORD_BCRYPT);
+			$stmt->bindParam(':password', $password);
 
 			if($stmt->execute()){
 				return true;
+			}else{
+				return $stmt->errorInfo();
 			}
-			
-			return false;
-
 		}
-
-		public function emailExists(){
-			
-			$sqlQuery = "SELECT id, nombre, apellido, password FROM " .$this->db_table. " WHERE email = ? LIMIT 0,1";
-			$stmt = $this->conn->prepare($sqlQuery);
-
-			$this->email=htmlspecialchars(strip_tags($this->email));
-
-			$stmt->bindParam(1, $this->email);
-			$stmt->execute();
-
-			$num = $stmt->rowCount();
-			if($num>0){
-				
-				$row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-				$this->id = $row['id'];
-				$this->nombre = $row['nombre'];
-				$this->apellido = $row['apellido'];
-				$this->password = $row['password'];
-
-				return true;
-			}
-
-			return false;
-		}
-    
-		public function updateUsuario(){
+		
+		public function actualizarUsuario(){
 
 			$password_set=!empty($this->password) ? ", password = :password" : "";
  
-			$sqlQuery = "UPDATE ".$this->db_table. " SET nombre = :nombre, apellido = :apellido, email = :email, fecha_modificacion = :fecha_modificacion {$password_set} WHERE id = :id";
+			$sqlQuery = "UPDATE ".$this->db_table. " SET nombre = :nombre, apellido = :apellido, ci = :ci, usuario = :usuario, id_estado = :id_estado, modificado_por = :modificado_por, fecha_modificacion = :fecha_modificacion {$password_set} WHERE id = :id";
 	 
 			$stmt = $this->conn->prepare($sqlQuery);
 	 
 			$this->nombre=htmlspecialchars(strip_tags($this->nombre));
 			$this->apellido=htmlspecialchars(strip_tags($this->apellido));
-			$this->email=htmlspecialchars(strip_tags($this->email));
+			$this->ci=htmlspecialchars(strip_tags($this->ci));
+			$this->usuario=htmlspecialchars(strip_tags($this->usuario));
+			$this->id_estado=htmlspecialchars(strip_tags($this->id_estado));
+			$this->modificado_por=htmlspecialchars(strip_tags($this->modificado_por));
 			$this->fecha_modificacion=htmlspecialchars(strip_tags($this->fecha_modificacion));
-	 
+			
 			$stmt->bindParam(':nombre', $this->nombre);
 			$stmt->bindParam(':apellido', $this->apellido);
-			$stmt->bindParam(':email', $this->email);
-			$stmt->bindParam(':fecha_modificacion', $this->fecha_modificacion);
+			$stmt->bindParam(':ci', $this->ci);
+			$stmt->bindParam(':usuario', $this->usuario);
+			$stmt->bindParam(":id_estado", $this->id_estado);
+			$stmt->bindParam(':modificado_por', $this->modificado_por);
+			$stmt->bindParam(":fecha_modificacion", $this->fecha_modificacion);
 	 
 			if(!empty($this->password)){
 				$this->password=htmlspecialchars(strip_tags($this->password));
@@ -133,19 +122,36 @@
 			}
 	 	
 		}
-    
-		function deleteUsuario(){
-			$sqlQuery = "DELETE FROM ".$this->db_table." WHERE id = ?";
+		
+		public function getDatosUsuario(){
+
+			$sqlQuery = "SELECT id, nombre, apellido, ci, id_estado, usuario, password FROM " .$this->db_table. " WHERE id = :id";
+			
 			$stmt = $this->conn->prepare($sqlQuery);
-	
+			
 			$this->id=htmlspecialchars(strip_tags($this->id));
-	
-			$stmt->bindParam(1, $this->id);
-	
-			if($stmt->execute()){
-				return true;
+			$stmt->bindParam(":id", $this->id);
+
+			$stmt->execute();
+			
+			return $stmt;
+		}
+
+		public function checkRegistroUsuario(){
+
+			$sqlQuery = "SELECT ci FROM " .$this->db_table. " WHERE ci = :ci";
+			
+			$stmt = $this->conn->prepare($sqlQuery);
+			
+			$this->ci=htmlspecialchars(strip_tags($this->ci));
+			$stmt->bindParam(":ci", $this->ci);
+
+			if($stmt->execute() == true){
+				return $stmt->rowCount();
+			}else{
+				return false;
 			}
-			return false;
-		}*/
-  }
+
+		}
+    }
 ?>
